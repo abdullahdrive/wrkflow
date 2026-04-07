@@ -76,7 +76,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
           git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "$dev-{{ steps.gitversion.outputs.SemVer }}"
+          git push origin "dev{{ steps.gitversion.outputs.SemVer }}"
 
 
   deploy-test:
@@ -174,22 +174,10 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
           overrideConfig: ${{ github.event.inputs.bump_version == 'true' && '"branches.main.increment=Minor"' || '' }}
-
-      - name: Generate  Tag
+       
+      - name: Show computed version
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
-          
-          NEW_TAG="v-${{ steps.gitversion.outputs.semVer }}"
-          
-          # Only tag if it doesn't already exist to avoid errors
-          if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
-            git tag "$NEW_TAG"
-            git push origin "$NEW_TAG"
-            echo "Tagged and pushed: $NEW_TAG"
-          else
-            echo "Tag $NEW_TAG already exists. Skipping tag creation."
-          fi
+          echo "v-SemVer=${{ steps.version.outputs.SemVer }}"
 
       - name: Live deployment started
         run: |
@@ -205,6 +193,12 @@ jobs:
           echo "Deploying ${{ steps.tag.outputs.tag }} to live environment..."
           # TODO: replace with actual deployment commands
 
+      - name: Create and push tag
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "abdullah@binaryquest.com"
+          git tag "v-${{ steps.version.outputs.SemVer }}"
+          git push origin "v-${{ steps.version.outputs.SemVer }}"
 
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
