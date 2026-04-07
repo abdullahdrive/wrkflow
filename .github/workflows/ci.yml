@@ -38,21 +38,24 @@ jobs:
           # Method 1: Use Environment Variables to handle the override
           GITVERSION_BRANCHES_MAIN_INCREMENT: ${{ github.event.inputs.bump_version == 'true' && 'Minor' || 'Patch' }}
 
-      - name: Generate and Push Tag
+      - name: Show computed version
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          echo "SemVer=${{ steps.gitversion.outputs.SemVer }}"
+      # - name: Generate and Push Tag
+      #   run: |
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Use the semVer output from the 'gitversion' step
-          NEW_TAG="v-${{ steps.gitversion.outputs.semVer }}"
+      #     # Use the semVer output from the 'gitversion' step
+      #     NEW_TAG="v-${{ steps.gitversion.outputs.semVer }}"
           
-          if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
-            git tag "$NEW_TAG"
-            git push origin "$NEW_TAG"
-            echo "Successfully tagged and pushed: $NEW_TAG"
-          else
-            echo "Tag $NEW_TAG already exists. Skipping."
-          fi
+      #     if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+      #       git tag "$NEW_TAG"
+      #       git push origin "$NEW_TAG"
+      #       echo "Successfully tagged and pushed: $NEW_TAG"
+      #     else
+      #       echo "Tag $NEW_TAG already exists. Skipping."
+      #     fi
 
       - name: Dev deployment started
         run: |
