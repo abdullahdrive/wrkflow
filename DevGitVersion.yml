@@ -1,6 +1,5 @@
 mode: ContinuousDeployment
 tag-prefix: 'dev-'
-assembly-informational-format: '{SemVer}:{env:GITHUB_RUN_NUMBER}' 
 branches:
   main:
     regex: ^main$
