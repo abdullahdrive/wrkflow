@@ -76,7 +76,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
           git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "dev{{ steps.gitversion.outputs.SemVer }}"
+          git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
 
 
   deploy-test:
