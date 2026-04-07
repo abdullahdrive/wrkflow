@@ -42,50 +42,7 @@ jobs:
       - name: Show computed version
         run: |
           echo "SemVer=dev-${{ steps.gitversion.outputs.SemVer }}"
-      
-      # - name: Create and push tag
-      #   run: |
-      #     git config user.name  "github-actions[bot]"
-      #     git config user.email "test.o"
-      #     git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
-      #     git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
 
-      # - name: Generate Tag
-      #   id: devTag
-      #   run: |
-      #     # Use the base SemVer from GitVersion
-      #     # BASE_VER="${{ steps.gitversion.outputs.semVer }}"
-          
-      #     # if [[ "${{ github.event.inputs.bump_version }}" != "true" ]]; then
-      #       # If not bumping, append the run number as the build identifier
-      #       # Result: 1.0.1.42
-      #       # FINAL_VER="${BASE_VER}.${{ github.run_number }}"
-      #       # echo "Using Patch + Build Number: $FINAL_VER"
-      #     # else
-      #       # If bumping, keep the clean Minor version from GitVersion
-      #       # Result: 1.1.0
-      #     #   FINAL_VER="$BASE_VER"
-      #     #   echo "Using Minor Bump: $FINAL_VER"
-      #     # fi
-          
-      #     # Save to outputs so you can use it as ${{ steps.devTag.outputs.tag }}
-      #     echo "tag=$FINAL_VER" >> $GITHUB_OUTPUT
-
-      # - name: Generate and Push Tag
-      #   run: |
-      #     git config --global user.name "github-actions[bot]"
-      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-      #     # Use the semVer output from the 'gitversion' step
-      #     NEW_TAG="v-${{ steps.gitversion.outputs.semVer }}"
-          
-      #     if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
-      #       git tag "$NEW_TAG"
-      #       git push origin "$NEW_TAG"
-      #       echo "Successfully tagged and pushed: $NEW_TAG"
-      #     else
-      #       echo "Tag $NEW_TAG already exists. Skipping."
-      #     fi
       - name: Dev deployment started
         run: |
           echo "========================================"
@@ -104,8 +61,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          git tag "dev-${{ steps.gitversion.outputs.tag }}"
-          git push origin "dev-${{ steps.gitversion.outputs.tag }}"
+          git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
+          git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
 
 
   deploy-test:
@@ -173,15 +130,16 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          # git tag "test-${{ steps.gitversion.outputs.SemVer }}"
-          # git push origin "test-${{ steps.gitversion.outputs.SemVer }}"
-          NEW_TAG="test-${{ steps.gitversion.outputs.semVer }}"
+          git tag "test-${{ steps.version.outputs.SemVer }}"
+          git push origin "test-${{ steps.version.outputs.SemVer }}"
+         
+          # NEW_TAG="test-${{ steps.gitversion.outputs.semVer }}"
           
-          # Only push if it doesn't exist (safety check)
-          if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
-            git tag "$NEW_TAG"
-            git push origin "$NEW_TAG"
-          fi
+          # # Only push if it doesn't exist (safety check)
+          # if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+          #   git tag "$NEW_TAG"
+          #   git push origin "$NEW_TAG"
+          # fi
 
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
