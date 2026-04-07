@@ -1,9 +1,7 @@
-next-version: 1.0.0
-mode: Mainline
+mode: ContinuousDeployment
 tag-prefix: 'dev-'
+assembly-informational-format: '{SemVer}:{env:GITHUB_RUN_NUMBER}' 
 branches:
   main:
     regex: ^main$
     increment: Patch
-    is-main-branch: true
-    source-branches: ['main'] 
