@@ -1,1 +1,2 @@
-it's a text
+expected version
+test: 0.0.2
