@@ -23,9 +23,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
-      - name: Refresh tags
-        run: git fetch --tags --force
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3
@@ -45,6 +42,31 @@ jobs:
       - name: Show computed version
         run: |
           echo "SemVer=dev-${{ steps.gitversion.outputs.SemVer }}"
+      
+      - name: Generate Tag
+        id: devTag
+        run: |
+                - name: Generate Tag
+        id: devTag
+        run: |
+          # Use the base SemVer from GitVersion
+          BASE_VER="${{ steps.gitversion.outputs.semVer }}"
+          
+          if [[ "${{ github.event.inputs.bump_version }}" != "true" ]]; then
+            # If not bumping, append the run number as the build identifier
+            # Result: 1.0.1.42
+            FINAL_VER="${BASE_VER}.${{ github.run_number }}"
+            echo "Using Patch + Build Number: $FINAL_VER"
+          else
+            # If bumping, keep the clean Minor version from GitVersion
+            # Result: 1.1.0
+            FINAL_VER="$BASE_VER"
+            echo "Using Minor Bump: $FINAL_VER"
+          fi
+          
+          # Save to outputs so you can use it as ${{ steps.devTag.outputs.tag }}
+          echo "tag=$FINAL_VER" >> $GITHUB_OUTPUT
+
       # - name: Generate and Push Tag
       #   run: |
       #     git config --global user.name "github-actions[bot]"
@@ -78,15 +100,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          # NEW_TAG="dev-${{ steps.gitversion.outputs.semVer }}"
-          
-          # # Only push if it doesn't exist (safety check)
-          # if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
-          #   git tag "$NEW_TAG"
-          #   git push origin "$NEW_TAG"
-          # fi
-          git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
+          git tag "dev-${{ steps.devTag.outputs.tag }}"
+          git push origin "dev-${{ steps.devTag.outputs.tag }}"
 
 
   deploy-test:
