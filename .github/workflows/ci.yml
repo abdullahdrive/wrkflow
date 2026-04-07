@@ -39,9 +39,6 @@ jobs:
         with:
           useConfigFile: true
           configFilePath: ${{ github.event.inputs.bump_version == 'true' && 'BumpGitVersion.yml' || 'DevGitVersion.yml' }}
-        # env:
-        #   # Method 1: Use Environment Variables to handle the override
-        #   GITVERSION_BRANCHES_MAIN_INCREMENT: ${{ github.event.inputs.bump_version == 'true' && 'Minor' || 'Patch' }}
 
       - name: Show computed version
         run: |
@@ -91,10 +88,8 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3
         with:
           useConfigFile: true
-          configFilePath: TestGitVersion.yml
-        env:
-          # Method 1: Use Environment Variables to handle the override
-          GITVERSION_BRANCHES_MAIN_INCREMENT: ${{ github.event.inputs.bump_version == 'true' && 'Minor' || 'Patch' }}
+          configFilePath: ${{ github.event.inputs.bump_version == 'true' && 'BumpGitVersion.yml' || 'TestGitVersion.yml' }}
+      
 
       - name: Show computed version
         run: |
@@ -155,9 +150,8 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3
         with:
           useConfigFile: true
-          configFilePath: GitVersion.yml
-          overrideConfig: ${{ github.event.inputs.bump_version == 'true' && '"branches.main.increment=Minor"' || '' }}
-       
+          configFilePath: ${{ github.event.inputs.bump_version == 'true' && 'BumpGitVersion.yml' || 'GitVersion.yml' }}
+
       - name: Show computed version
         run: |
           echo "v-SemVer=${{ steps.version.outputs.SemVer }}"
