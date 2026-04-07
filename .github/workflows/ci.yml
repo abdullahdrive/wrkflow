@@ -43,26 +43,33 @@ jobs:
         run: |
           echo "SemVer=dev-${{ steps.gitversion.outputs.SemVer }}"
       
-      - name: Generate Tag
-        id: devTag
+      - name: Create and push tag
         run: |
-          # Use the base SemVer from GitVersion
-          BASE_VER="${{ steps.gitversion.outputs.semVer }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "test.o"
+          git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
+          git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
+
+      # - name: Generate Tag
+      #   id: devTag
+      #   run: |
+      #     # Use the base SemVer from GitVersion
+      #     # BASE_VER="${{ steps.gitversion.outputs.semVer }}"
           
-          if [[ "${{ github.event.inputs.bump_version }}" != "true" ]]; then
-            # If not bumping, append the run number as the build identifier
-            # Result: 1.0.1.42
-            FINAL_VER="${BASE_VER}.${{ github.run_number }}"
-            echo "Using Patch + Build Number: $FINAL_VER"
-          else
-            # If bumping, keep the clean Minor version from GitVersion
-            # Result: 1.1.0
-            FINAL_VER="$BASE_VER"
-            echo "Using Minor Bump: $FINAL_VER"
-          fi
+      #     # if [[ "${{ github.event.inputs.bump_version }}" != "true" ]]; then
+      #       # If not bumping, append the run number as the build identifier
+      #       # Result: 1.0.1.42
+      #       # FINAL_VER="${BASE_VER}.${{ github.run_number }}"
+      #       # echo "Using Patch + Build Number: $FINAL_VER"
+      #     # else
+      #       # If bumping, keep the clean Minor version from GitVersion
+      #       # Result: 1.1.0
+      #     #   FINAL_VER="$BASE_VER"
+      #     #   echo "Using Minor Bump: $FINAL_VER"
+      #     # fi
           
-          # Save to outputs so you can use it as ${{ steps.devTag.outputs.tag }}
-          echo "tag=$FINAL_VER" >> $GITHUB_OUTPUT
+      #     # Save to outputs so you can use it as ${{ steps.devTag.outputs.tag }}
+      #     echo "tag=$FINAL_VER" >> $GITHUB_OUTPUT
 
       # - name: Generate and Push Tag
       #   run: |
