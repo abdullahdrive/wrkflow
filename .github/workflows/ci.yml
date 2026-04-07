@@ -43,12 +43,12 @@ jobs:
         run: |
           echo "SemVer=dev-${{ steps.gitversion.outputs.SemVer }}"
       
-      - name: Create and push tag
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "test.o"
-          git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
+      # - name: Create and push tag
+      #   run: |
+      #     git config user.name  "github-actions[bot]"
+      #     git config user.email "test.o"
+      #     git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
+      #     git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
 
       # - name: Generate Tag
       #   id: devTag
@@ -104,8 +104,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          git tag "dev-${{ steps.devTag.outputs.tag }}"
-          git push origin "dev-${{ steps.devTag.outputs.tag }}"
+          git tag "dev-${{ steps.gitversion.outputs.tag }}"
+          git push origin "dev-${{ steps.gitversion.outputs.tag }}"
 
 
   deploy-test:
