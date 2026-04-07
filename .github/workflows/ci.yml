@@ -46,9 +46,6 @@ jobs:
       - name: Generate Tag
         id: devTag
         run: |
-                - name: Generate Tag
-        id: devTag
-        run: |
           # Use the base SemVer from GitVersion
           BASE_VER="${{ steps.gitversion.outputs.semVer }}"
           
