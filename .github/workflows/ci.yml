@@ -24,6 +24,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Show input value
+        run: |
+          echo "Bump to next Minor: ${{ github.event.inputs.bump_version }}"
+          
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3
         with:
