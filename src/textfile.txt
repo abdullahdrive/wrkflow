@@ -1,5 +1,5 @@
 expected version
-dev: 0.0.3
+dev- 0.0.4
 
-test: 0.0.1
-
+test- 0.0.2
+v-0.0.1
