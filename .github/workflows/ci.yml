@@ -26,7 +26,7 @@ jobs:
           
       - name: Refresh tags
         run: git fetch --tags --force
-        
+
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3
         with:
@@ -78,8 +78,15 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
+          NEW_TAG="dev-${{ steps.gitversion.outputs.semVer }}"
+          
+          # Only push if it doesn't exist (safety check)
+          if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+            git tag "$NEW_TAG"
+            git push origin "$NEW_TAG"
+          fi
+          # git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
+          # git push origin "dev-${{ steps.gitversion.outputs.SemVer }}"
 
 
   deploy-test:
@@ -147,8 +154,15 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          git tag "test-${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "test-${{ steps.gitversion.outputs.SemVer }}"
+          # git tag "test-${{ steps.gitversion.outputs.SemVer }}"
+          # git push origin "test-${{ steps.gitversion.outputs.SemVer }}"
+          NEW_TAG="test-${{ steps.gitversion.outputs.semVer }}"
+          
+          # Only push if it doesn't exist (safety check)
+          if ! git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+            git tag "$NEW_TAG"
+            git push origin "$NEW_TAG"
+          fi
 
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
