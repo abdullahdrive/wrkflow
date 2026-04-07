@@ -1,0 +1,6 @@
+mode: ContinuousDeployment
+tag-prefix: 'test-'
+branches:
+  main:
+    regex: ^main$
+    increment: Patch
