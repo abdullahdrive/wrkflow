@@ -28,11 +28,12 @@ jobs:
           versionSpec: '6.x'
 
       - name: Determine version
-        id: version
+        id: gitversion
         uses: gittools/actions/gitversion/execute@v3
         with:
           useConfigFile: true
-          overrideConfig: ${{ github.event.inputs.bump_version == 'true' && 'branches.main.increment=Minor' || '' }}
+          # Use double quotes inside the string to satisfy GitVersion's CLI parser
+          overrideConfig: ${{ github.event.inputs.bump_version == 'true' && '"branches.main.increment=Minor"' || '' }}
 
       - name: Generate  Tag
         run: |
@@ -94,7 +95,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3
         with:
           useConfigFile: true
-          overrideConfig: ${{ github.event.inputs.bump_version == 'true' && 'branches.main.increment=Minor' || '' }}
+          overrideConfig: ${{ github.event.inputs.bump_version == 'true' && '"branches.main.increment=Minor"' || '' }}
 
       - name: Generate  Tag
         run: |
@@ -152,7 +153,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3
         with:
           useConfigFile: true
-          overrideConfig: ${{ github.event.inputs.bump_version == 'true' && 'branches.main.increment=Minor' || '' }}
+          overrideConfig: ${{ github.event.inputs.bump_version == 'true' && '"branches.main.increment=Minor"' || '' }}
 
       - name: Generate  Tag
         run: |
