@@ -1,0 +1,183 @@
+name: Multi-Stage Deployment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy-dev:
+    name: Deploy to Dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine version
+        id: version
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+
+      - name: Resolve unique tag
+        id: tag
+        run: |
+          BASE="dev-${{ steps.version.outputs.semVer }}"
+          TAG="$BASE"
+          SEQ=1
+          git fetch --tags
+          while git rev-parse "$TAG" >/dev/null 2>&1; do
+            TAG="${BASE}.${SEQ}"
+            SEQ=$((SEQ + 1))
+          done
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag: $TAG"
+
+      - name: Dev deployment started
+        run: |
+          echo "========================================"
+          echo "  DEV DEPLOYMENT STARTED"
+          echo "  Version: ${{ steps.tag.outputs.tag }}"
+          echo "  Commit:  ${{ github.sha }}"
+          echo "  Run:     ${{ github.run_number }}"
+          echo "========================================"
+
+      - name: Deploy to dev
+        run: |
+          echo "Deploying ${{ steps.tag.outputs.tag }} to dev environment..."
+          # TODO: replace with actual deployment commands
+
+      - name: Tag dev release
+        run: |
+          git tag "${{ steps.tag.outputs.tag }}"
+          git push origin "${{ steps.tag.outputs.tag }}"
+
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+
+  deploy-test:
+    name: Deploy to Test
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    environment: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine version
+        id: version
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+
+      - name: Resolve unique tag
+        id: tag
+        run: |
+          BASE="test-${{ steps.version.outputs.semVer }}"
+          TAG="$BASE"
+          SEQ=1
+          git fetch --tags
+          while git rev-parse "$TAG" >/dev/null 2>&1; do
+            TAG="${BASE}.${SEQ}"
+            SEQ=$((SEQ + 1))
+          done
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag: $TAG"
+
+      - name: Test deployment started
+        run: |
+          echo "========================================"
+          echo "  TEST DEPLOYMENT STARTED"
+          echo "  Version: ${{ steps.tag.outputs.tag }}"
+          echo "  Commit:  ${{ github.sha }}"
+          echo "  Run:     ${{ github.run_number }}"
+          echo "========================================"
+
+      - name: Deploy to test
+        run: |
+          echo "Deploying ${{ steps.tag.outputs.tag }} to test environment..."
+          # TODO: replace with actual deployment commands
+
+      - name: Tag test release
+        run: |
+          git tag "${{ steps.tag.outputs.tag }}"
+          git push origin "${{ steps.tag.outputs.tag }}"
+
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+
+  deploy-live:
+    name: Deploy to Live
+    needs: deploy-test
+    runs-on: ubuntu-latest
+    environment: live
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine version
+        id: version
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+
+      - name: Resolve unique tag
+        id: tag
+        run: |
+          BASE="v-${{ steps.version.outputs.semVer }}"
+          TAG="$BASE"
+          SEQ=1
+          git fetch --tags
+          while git rev-parse "$TAG" >/dev/null 2>&1; do
+            TAG="${BASE}.${SEQ}"
+            SEQ=$((SEQ + 1))
+          done
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag: $TAG"
+
+      - name: Live deployment started
+        run: |
+          echo "========================================"
+          echo "  LIVE DEPLOYMENT STARTED"
+          echo "  Version: ${{ steps.tag.outputs.tag }}"
+          echo "  Commit:  ${{ github.sha }}"
+          echo "  Run:     ${{ github.run_number }}"
+          echo "========================================"
+
+      - name: Deploy to live
+        run: |
+          echo "Deploying ${{ steps.tag.outputs.tag }} to live environment..."
+          # TODO: replace with actual deployment commands
+
+      - name: Tag live release
+        run: |
+          git tag "${{ steps.tag.outputs.tag }}"
+          git push origin "${{ steps.tag.outputs.tag }}"
+
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
