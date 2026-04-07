@@ -41,7 +41,7 @@ jobs:
 
       - name: Show computed version
         run: |
-          echo "SemVer=${{ steps.gitversion.outputs.SemVer }}"
+          echo "SemVer=dev-${{ steps.gitversion.outputs.SemVer }}"
       # - name: Generate and Push Tag
       #   run: |
       #     git config --global user.name "github-actions[bot]"
@@ -61,7 +61,7 @@ jobs:
         run: |
           echo "========================================"
           echo "  DEV DEPLOYMENT STARTED"
-          echo "  Version: v-${{ steps.gitversion.outputs.semVer }}"
+          echo "  Version: dev-${{ steps.gitversion.outputs.semVer }}"
           echo "  Commit:  ${{ github.sha }}"
           echo "  Run:     ${{ github.run_number }}"
           echo "========================================"
@@ -75,8 +75,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          git tag "${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "${{ steps.gitversion.outputs.SemVer }}"
+          git tag "dev-${{ steps.gitversion.outputs.SemVer }}"
+          git push origin "$dev-{{ steps.gitversion.outputs.SemVer }}"
 
 
   deploy-test:
@@ -108,7 +108,7 @@ jobs:
 
       - name: Show computed version
         run: |
-          echo "SemVer=${{ steps.version.outputs.SemVer }}"
+          echo "test-SemVer=${{ steps.version.outputs.SemVer }}"
     
       # - name: Generate  Tag
       #   run: |
@@ -144,8 +144,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "abdullah@binaryquest.com"
-          git tag "${{ steps.gitversion.outputs.SemVer }}"
-          git push origin "${{ steps.gitversion.outputs.SemVer }}"
+          git tag "test-${{ steps.gitversion.outputs.SemVer }}"
+          git push origin "test-${{ steps.gitversion.outputs.SemVer }}"
 
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
