@@ -38,7 +38,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3
         with:
           useConfigFile: true
-          configFilePath: DevGitVersion.yml
+          configFilePath: ${{ github.event.inputs.bump_version == 'true' && 'BumpGitVersion.yml' || 'DevGitVersion.yml' }}
         env:
           # Method 1: Use Environment Variables to handle the override
           GITVERSION_BRANCHES_MAIN_INCREMENT: ${{ github.event.inputs.bump_version == 'true' && 'Minor' || 'Patch' }}
