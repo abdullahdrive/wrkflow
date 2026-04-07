@@ -1,3 +1,2 @@
 expected version
-dev-0.1.0-34
-test-0.1.0-34
+dev-0.0.1-
